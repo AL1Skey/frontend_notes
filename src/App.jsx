@@ -13,33 +13,62 @@ import NotesForm from "./pages/notes/NotesForm";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     element: <NavbarWrapper />,
-    loader: async () => {
-      if (!localStorage.getItem("Authorization")) {
-        throw redirect("/login");
-      }
-      return null;
-    },
+    
     children: [
       {
-        path:"",
-        element:<Home />,
+        path:"/",
+        element:<Home isPublic={true} />,
+      },
+      {
+        path:"/detail/:id",
+        element:<NotesDetail isPublic={true} />,
+      },
+      {
+        path:"/notes",
+        element:<Home  />,
+        loader: async () => {
+          if (!localStorage.getItem("Authorization")) {
+            throw redirect("/login");
+          }
+          return null;
+        },
+      },
+      {
+        path:"/notes/:id",
+        element:<NotesDetail  />,
+        loader: async () => {
+          if (!localStorage.getItem("Authorization")) {
+            throw redirect("/login");
+          }
+          return null;
+        },
       },
       {
         path:"/add",
         element:<NotesForm />,
+        loader: async () => {
+          if (!localStorage.getItem("Authorization")) {
+            throw redirect("/login");
+          }
+          return null;
+        },
       },
       {
         path:"/edit/:id",
         element:<NotesForm />,
+        loader: async () => {
+          if (!localStorage.getItem("Authorization")) {
+            throw redirect("/login");
+          }
+          return null;
+        },
       },
-      {
-        path:"/detail/:id",
-        element:<NotesDetail />,
-      }
+ 
     ]
   },
+  
   {
     path: "/login",
     element: <Login />,

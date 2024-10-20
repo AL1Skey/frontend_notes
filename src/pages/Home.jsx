@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-export default function Home() {
+export default function Home({isPublic=false}) {
   const [entries, setEntries] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -14,14 +14,27 @@ export default function Home() {
   useEffect(() => {
     const fetchEntries = async () => {
       setLoading(true);
-      const response = await fetch(`${process.env.API_URL}/notes`, {
+      let response;
+      console.log(isPublic);
+      if(!isPublic){
+      response = await fetch(`${process.env.API_URL}/notes`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: localStorage.getItem("Authorization"),
         },
       });
+    }else{
+      response = await fetch(`${process.env.API_URL}/public/notes`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("Authorization"),
+        },
+      });
+    }
       const data = await response.json();
+      console.log(data);
       if (data.error) {
         alert(data.error);
       } else {
@@ -102,7 +115,7 @@ export default function Home() {
                 <button
                   className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                   onClick={() => {
-                    navigate(`/detail/${entry._id}`);
+                    navigate(isPublic ?`/detail/${entry.userId}-${entry._id}` :`/notes/${entry._id}`);
                   }
                   }
                 >

@@ -4,14 +4,16 @@ import React, { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { CalendarIcon, ArrowLeftIcon } from "lucide-react"
 
-export default function NotesDetail() {
+export default function NotesDetail({isPublic=false}) {
   const [entry, setEntry] = useState(null)
   const { id } = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchEntry = async () => {
-      const response = await fetch(`${process.env.API_URL}/notes/${id}`, {
+      const [userId, noteId] = id.split("-")
+      const url = isPublic ? `${process.env.API_URL}/public/notes?userId=${userId}&noteId=${noteId}` : `${process.env.API_URL}/notes/${id}`
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
